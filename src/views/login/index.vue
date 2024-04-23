@@ -127,6 +127,12 @@ const register = async (params) => {
     isLogin.value = true
     loading.value = false
   } catch (error) {
+    loading.value = false
+    ElMessage({
+      message: error,
+      type: 'error',
+      duration: 1000
+    })
     console.log(error)
   }
 }
@@ -278,7 +284,6 @@ const register = async (params) => {
                 type="date"
                 format="YYYY-MM-DD"
                 placeholder="选择生日日期"
-                clearable
               />
             </el-form-item>
 

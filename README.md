@@ -19,6 +19,9 @@ Vite
 
 # 项目启动
 
+先安装 node.js
+推荐 node 版本 v16.19.0
+
 1. 安装依赖包
    npm install
 2. 启动项目

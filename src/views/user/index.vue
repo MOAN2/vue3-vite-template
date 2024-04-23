@@ -78,11 +78,10 @@
           <el-form-item prop="birthday" label="生日">
             <el-date-picker
               v-if="isEdit"
-              v-model="form.birthday"
+              v-model="form.birthdayDate"
               type="date"
               format="YYYY-MM-DD"
               placeholder="选择生日日期"
-              clearable
             />
             <p font-size-5 v-else>{{ form.birthday }}</p>
           </el-form-item>
@@ -187,6 +186,7 @@ const form = ref({
   age: 0,
   avatarUrl: '',
   birthday: '',
+  birthdayDate: '',
   code: ' ',
   createdTime: ' ',
   deletedAt: 0,
@@ -287,10 +287,13 @@ onMounted(() => {
   getInfo()
 })
 
+let lastDate = ''
 const handleEdit = () => {
   form.value.gender =
     form.value.gender == 1 ? '男' : form.value.gender == 2 ? '女' : '未知'
-  form.value.birthday = new Date(form.value.birthday)
+  console.log(form.value, 'form.value')
+  lastDate = form.value.birthdayDate
+  // form.value.birthday = new Date(form.value.birthday)
   isEdit.value = true
 }
 
@@ -304,14 +307,16 @@ const getInfo = async () => {
       let arr = data.userModelList.filter((item) => {
         return item.deletedAt == 0
       })
+
       let userId = user.getInfo.userId
-      arr.filter((item) => {
-        if (Number(item.id) == userId) {
+      arr = arr.filter((item) => {
+        if (Number(item.id) === userId) {
           return item
         }
       })
       form.value = arr[0]
-      console.log(form.value, '----')
+      form.value.birthdayDate = arr[0].birthday
+      form.value.birthday = formatDate(new Date(form.value.birthdayDate))
     }
   } catch (error) {
     console.log(error)
@@ -322,6 +327,9 @@ const edit = async (formEl) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
+      if (form.value.birthdayDate === null) {
+        return ElMessage({ message: '生日不能为空', type: 'error' })
+      }
       editApi()
     } else {
       return fields
@@ -339,20 +347,24 @@ const editApi = async () => {
       email: form.value.email,
       gender: form.value.gender == '男' ? 1 : form.value.gender == '女' ? 2 : 3,
       age: form.value.age,
-      birthday: formatDate(new Date(form.value.birthday))
+      birthday: formatDate(new Date(form.value.birthdayDate))
     }
 
     await api.updateUserApi(params)
     ElMessage({ message: '编辑成功', type: 'success' })
-    form.value.birthday = formatDate(new Date(form.value.birthday))
+    form.value.birthday = formatDate(new Date(form.value.birthdayDate))
     isEdit.value = false
+    lastDate = ''
   } catch (error) {
-    ElMessage({ message: '编辑失败，请重试', type: 'success' })
+    ElMessage({ message: '编辑失败，请重试', type: 'error' })
     isEdit.value = false
   }
 }
 const cancel = () => {
+  console.log(form.value, 'form.value')
   isEdit.value = false
+  form.value.birthdayDate = lastDate
+  lastDate = ''
 }
 </script>
 <style lang="scss" scoped>

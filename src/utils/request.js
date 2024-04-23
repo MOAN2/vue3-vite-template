@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ElLoading } from 'element-plus'
+// import { ElLoading } from 'element-plus'
 import router from '../router'
 
 const request = axios.create({
@@ -47,7 +47,7 @@ request.interceptors.response.use(
       return Promise.reject(res.message)
     } else if (res.code !== 200) {
       console.log('请求错误', res.message)
-
+      ElMessage({ message: `${res.message},请重试`, type: 'error' })
       return Promise.reject(error)
     }
     return Promise.resolve(res)
