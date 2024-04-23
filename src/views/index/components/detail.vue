@@ -151,7 +151,7 @@
     </div>
   </el-dialog>
 
-  <el-dialog v-model="orderVisible" title="提交预定" width="500">
+  <el-dialog v-model="orderVisible" title="提交预定" width="500" @close="close">
     <el-form :model="form" :rules="rules" ref="formRef">
       <el-form-item label="预定姓名" prop="username">
         <el-input v-model="form.username" autocomplete="off" />
@@ -192,7 +192,7 @@
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="orderVisible = false">取消</el-button>
+        <el-button @click="close">取消</el-button>
         <el-button type="primary" @click="orderConfirm(formRef)">
           确认
         </el-button>
@@ -293,24 +293,32 @@ const orderConfirm = async (formEl) => {
  */
 const handleOrder = async () => {
   try {
-    //todo shopId
     await api.addOrderApi({
       ...form,
-      singlePrice: props.detail.price * form.travelNum
+      singlePrice: props.detail.price
     })
     ElMessage({
       message: '预定成功',
       type: 'success'
     })
-    orderVisible.value = false
+    close()
   } catch (error) {
     ElMessage({
       message: '预定失败，请重试',
       type: 'error'
     })
-    orderVisible.value = false
+    close()
     console.log(error)
   }
+}
+const close = () => {
+  orderVisible.value = false
+  initDialog()
+}
+const initDialog = () => {
+  form.travelNum = 1
+  form.username = ''
+  form.mobile = ''
 }
 </script>
 <style lang="scss" scoped>

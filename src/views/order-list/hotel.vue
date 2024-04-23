@@ -19,7 +19,7 @@
         <el-table-column prop="mobile" label="联系人电话" width="180" />
         <el-table-column prop="area" label="酒店地址" width="280" />
         <el-table-column prop="travelNum" label="订单天数" width="80" />
-        <el-table-column prop="singlePrice" label="订单总价" width="100" />
+        <el-table-column prop="singlePrice" label="酒店单价" width="100" />
         <el-table-column prop="createdTime" label="订单创建时间" width="180" />
         <el-table-column prop="updatedTime" label="订单更新时间" width="180" />
         <el-table-column prop="address" label="操作" width="180" fixed="right">
@@ -149,7 +149,9 @@ const handleDelete = async (item) => {
   ElMessageBox.alert('确认删除这条订单吗？', '删除确认', {
     confirmButtonText: '确定',
     callback: (action) => {
-      delOrder(item.id)
+      if (action.includes('confirm')) {
+        delOrder(item.id)
+      }
     }
   })
 }
