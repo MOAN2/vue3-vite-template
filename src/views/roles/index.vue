@@ -68,39 +68,18 @@
       />
     </div>
   </div>
-
-  <el-dialog v-model="dialogVisible" title="编辑订单" width="500">
-    <el-form :model="form" :rules="rules" ref="formRef">
-      <el-form-item label="预定姓名" prop="username">
-        <el-input v-model="form.username" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="联系方式" prop="mobile">
-        <el-input v-model.number="form.mobile" autocomplete="off" type="text" />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="editConfirm(formRef)">确认</el-button>
-      </div>
-    </template>
-  </el-dialog>
 </template>
 <script setup>
 import * as api from '@/api/app'
 import { onMounted } from 'vue'
 import { userStore } from '@/store/user'
 
-const user = userStore()
-const dialogVisible = ref(false)
 const tableParams = reactive({
   pageNo: 1,
   pageSize: 10
 })
 const total = ref(0)
 const tableData = ref([])
-const form = reactive({})
-const formRef = ref()
 
 onMounted(() => {
   getList()
@@ -126,10 +105,12 @@ const getList = async () => {
 const rules = reactive({})
 
 const handleDelete = async (item) => {
-  ElMessageBox.alert('确认删除这条订单吗？', '删除确认', {
+  ElMessageBox.alert('确认删除该用户吗？', '删除确认', {
     confirmButtonText: '确定',
     callback: (action) => {
-      delUser(item.id)
+      if (action.includes('confirm')) {
+        delUser(item.id)
+      }
     }
   })
 }
@@ -149,29 +130,6 @@ const delUser = async (id) => {
   }
 }
 
-// const editConfirm = async (formEl) => {
-//   if (!formEl) return
-//   await formEl.validate((valid, fields) => {
-//     if (valid) {
-//       editOrder()
-//     } else {
-//       console.log('error submit!', fields)
-//     }
-//   })
-// }
-
-// /**修改用户角色权限 */
-// const editOrder = async () => {
-//   try {
-//     await api.updateUserRoleApi(form)
-//     ElMessage.success('修改成功')
-//     dialogVisible.value = false
-//     getList()
-//   } catch (error) {
-//     ElMessage.error('修改失败，请重试')
-//     console.log(error)
-//   }
-// }
 const handleSizeChange = (val) => {
   tableParams.pageSize = val
   getList()
